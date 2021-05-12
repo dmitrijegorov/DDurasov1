@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:ordering="sequentially"
+    >
+
+    <objectAnimator
+        android:duration="@integer/main_transition_time"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
+        android:propertyName="y"
+        android:valueFrom="4800"
+        android:valueTo="4500"
+        android:valueType="floatType" />
+
+    <objectAnimator
+        android:duration="@integer/main_transition_time"
+        android:interpolator="@android:anim/accelerate_decelerate_interpolator"
+        android:propertyName="y"
+        android:valueFrom="2240"
+        android:valueTo="@dimen/padding_main"
+        android:valueType="floatType" />
+
+</set>
