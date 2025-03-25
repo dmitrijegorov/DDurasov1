@@ -26,3 +26,4 @@ jobs:
           cli-version: canary
           create-pull-request: true
           dev-mode: true
+          args: "--force"
