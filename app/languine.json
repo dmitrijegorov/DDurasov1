@@ -12,7 +12,7 @@
   "files": {
     "android": {
       "include": [
-        "src/main/res/values-ru/strings.xml"
+        "src/main/res/values-[locale]/strings.xml"
       ]
     }
   }
