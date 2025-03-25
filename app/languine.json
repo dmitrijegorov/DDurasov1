@@ -1,0 +1,19 @@
+{
+  "locale": {
+    "source": "ru",
+    "targets": [
+      "es",
+      "pt",
+      "fr",
+      "no",
+      "zh"
+    ]
+  },
+  "files": {
+    "android": {
+      "include": [
+        "src/main/res/values-ru/strings.xml"
+      ]
+    }
+  }
+}
