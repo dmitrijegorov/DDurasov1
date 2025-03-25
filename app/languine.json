@@ -2,8 +2,6 @@
   "locale": {
     "source": "ru",
     "targets": [
-      "fr",
-      "de",
       "es",
       "sv"
     ]
