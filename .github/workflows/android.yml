@@ -24,6 +24,6 @@ jobs:
           project-id: ${{ secrets.LANGUINE_PROJECT_ID }}
           working-directory: app
           cli-version: canary
-          create-pull-request: true
+          create-pull-request: true # coming soon
           dev-mode: true
           args: "--force"
