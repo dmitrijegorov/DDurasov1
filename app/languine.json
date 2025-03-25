@@ -2,7 +2,9 @@
   "locale": {
     "source": "ru",
     "targets": [
-      "fr"
+      "fr",
+      "de",
+      "es"
     ]
   },
   "files": {
