@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Languine Action
-        uses: languine-ai/languine@v1
+        uses: languine-ai/languine@latest
         env:
            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -27,3 +27,12 @@ jobs:
           create-pull-request: true # coming soon
           dev-mode: true
           args: "--force"
+
+      - name: Run Languine transform
+        run: bunx languine@canary transform app
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update translations with Languine"
+          file_pattern: "*.xml"
