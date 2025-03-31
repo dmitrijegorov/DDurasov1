@@ -1,5 +1,4 @@
 {
-  "projectId": "prj_JWBCE7Ufhes0K30tqe1m7",
   "locale": {
     "source": "ru",
     "targets": [
@@ -10,7 +9,8 @@
   "files": {
     "android": {
       "include": [
-        "/src/main/res/values-[locale]/strings.xml"
+        "/src/main/res/values-[locale]/strings.xml",
+        "/src/main/res/values-[locale]/strings-sample.xml"
       ]
     }
   }
