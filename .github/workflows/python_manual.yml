@@ -1,0 +1,26 @@
+name: Python CI
+
+on:
+  push:
+    branches:
+      - 'releases/**'
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Calculate TP index
+        run: |
+          python tp_index.py
+        env:
+          TP: ${{ secrets.TP }}
