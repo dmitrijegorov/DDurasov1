@@ -3,7 +3,8 @@
     "source": "ru",
     "targets": [
       "es",
-      "sv"
+      "sv",
+      "fr"
     ]
   },
   "files": {
