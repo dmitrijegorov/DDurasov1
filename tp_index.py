@@ -4,5 +4,5 @@ def main():
     tp = os.getenv('TP')
     print("The TP index:", tp)
 
-if name == "__main__":
+if __name__ == "__main__":
     main()
