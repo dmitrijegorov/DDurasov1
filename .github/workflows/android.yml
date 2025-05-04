@@ -40,10 +40,7 @@ jobs:
         target: [default, google_apis]
         channel: [ stable ]
         api-level:
-          - 29
           - 30
-          - 31
-          - 34
         include:
           - os: ubuntu-24.04-arm
             arch: x86
@@ -81,8 +78,6 @@ jobs:
             ~/.android/avd/*
             ~/.android/adb*
           key: avd-${{ matrix.api-level }}-${{ matrix.os }}-${{ matrix.target }}
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
       - name: Create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
