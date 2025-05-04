@@ -42,18 +42,18 @@ jobs:
         api-level:
           - 30
         include:
-          - os: ubuntu-24.04-arm
-            arch: x86
-            api-level: 30
-            target: aosp_atd
-            channel: stable
+          # - os: ubuntu-24.04-arm
+          #   arch: x86_64
+          #   api-level: 30
+          #   target: aosp_atd
+          #   channel: stable
           - os: ubuntu-24.04
-            arch: x86
+            arch: x86_64
             api-level: 29
             target: aosp_atd
             channel: canary
           - os: ubuntu-22.04
-            arch: x86
+            arch: x86_64
             api-level: 30
             target: aosp_atd
             channel: canary
