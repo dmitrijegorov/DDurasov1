@@ -80,6 +80,8 @@ jobs:
             ~/.android/avd/*
             ~/.android/adb*
           key: avd-${{ matrix.api-level }}-${{ matrix.os }}-${{ matrix.target }}
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
       - name: Create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
@@ -102,6 +104,7 @@ jobs:
           script: |
             touch emulator.log                    # create log file
             chmod 777 emulator.log                # allow writing to log file
+            adb logcat >> emulator.log &          # pipe all logcat messages into log file as a background process
             ./gradlew connectedDebugAndroidTest
       - name: Upload results
         if: ${{ always() }}
