@@ -9,7 +9,7 @@ on:
   push:
     paths:
       - 'sample.png'
-      - '.github/workflows/ocr-discord.yml'
+      - '.github/workflows/ocr.yml'
       
 jobs:
   easyocr:
