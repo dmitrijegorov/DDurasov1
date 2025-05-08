@@ -30,7 +30,7 @@ jobs:
 
       - name: Run OCR
         run: |
-          python easyocr.py
+          python easyocr_script.py
 
       - name: Upload OCR result as artifact
         uses: actions/upload-artifact@v4
@@ -51,8 +51,8 @@ jobs:
 
     - name: Run OCR
       run: |
-        tesseract fsk.jpg output -l eng
-        cat tesseract.txt
+        tesseract fsk.jpg output -l rus
+        cat output.txt
 
     - name: Upload OCR result as artifact
       uses: actions/upload-artifact@v4
