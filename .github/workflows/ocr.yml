@@ -47,17 +47,17 @@ jobs:
     - name: Install Tesseract
       run: |
         sudo apt-get update
-        sudo apt-get install -y tesseract-ocr
+        sudo apt-get install -y tesseract-ocr tesseract-ocr-rus
 
     - name: Run OCR
       run: |
-        tesseract fsk.jpg output -l rus
-        cat output.txt
+        tesseract fsk.jpg tesseract -l rus
+        cat tesseract.txt
 
     - name: Upload OCR result as artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ocr-result-tesseract
+        name: tesseract-result
         path: tesseract.txt
 
   paddleocr:
