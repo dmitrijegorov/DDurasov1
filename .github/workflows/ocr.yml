@@ -51,7 +51,7 @@ jobs:
 
     - name: Run OCR
       run: |
-        tesseract fsk.jpg tesseract -l rus
+        tesseract fsk.jpg tesseract -l rus+eng
         cat tesseract.txt
 
     - name: Upload OCR result as artifact
