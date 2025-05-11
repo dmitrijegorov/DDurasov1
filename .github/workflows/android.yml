@@ -6,17 +6,6 @@ on:
     branches:
       - 'releases/**'
       - 'master'
-    paths:
-      - 'build.gradle'
-      - 'settings.gradle'
-      - 'gradle.properties'
-      - 'gradlew'
-      - 'gradlew.bat'
-      - 'gradle/**'
-      - 'app/**'
-      - '*.gradle.kts'
-      - 'gradle/**'
-      - '.github/workflows/android.yml'
     paths-ignore:
       - 'analysis/**'
       - '**.md'
@@ -25,17 +14,6 @@ on:
     branches:
       - 'releases/**'
       - 'master'
-    paths:
-      - 'build.gradle'
-      - 'settings.gradle'
-      - 'gradle.properties'
-      - 'gradlew'
-      - 'gradlew.bat'
-      - 'gradle/**'
-      - 'app/**'
-      - '*.gradle.kts'
-      - 'gradle/**'
-      - '.github/workflows/android.yml'
     paths-ignore:
       - 'analysis/**'
       - '**.md'
