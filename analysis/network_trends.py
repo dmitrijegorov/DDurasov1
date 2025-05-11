@@ -366,50 +366,6 @@ def find_emerging_terms(monthly_frequencies, ordered_month_names, term_type='key
     sorted_emerging_terms = dict(sorted(emerging_terms.items(), key=lambda item: item[1]['avg_freq_late'], reverse=True))
     return sorted_emerging_terms
 
-
-# Burst Detection, requires monthly_frequencies
-def detect_bursts(monthly_frequencies, ordered_month_names, term_type='keywords', top_n_terms_to_check=50):
-    try:
-        from burstdetection import GMMBurstsDetector as BD
-    except ImportError:
-        print("burstdetection not found.")
-        return {}
-
-    bursty_terms = {}
-    total_term_counts = Counter()
-    for month_name in ordered_month_names:
-        if month_name in monthly_frequencies and term_type in monthly_frequencies[month_name]:
-            total_term_counts.update(monthly_frequencies[month_name][term_type])
-    if not total_term_counts: return {}
-
-    for term, _ in total_term_counts.most_common(top_n_terms_to_check):
-        frequencies = [monthly_frequencies[m][term_type].get(term, 0) for m in ordered_month_names if m in monthly_frequencies]
-        if not frequencies or sum(frequencies) < 3: continue
-        data_for_burst = [(i, freq) for i, freq in enumerate(frequencies) if freq > 0]
-        if len(data_for_burst) < 2 : continue
-        try:
-            bd = BD(n_states=2, transition_cost=1.0, min_burst_length=1, observation_model='poisson')
-            bursts = bd.fit_predict(data_for_burst)
-            burst_periods = []
-            is_bursting = False
-            start_burst = -1
-            for i, (time_idx, freq) in enumerate(data_for_burst):
-                state = bursts[i]
-                month_original_idx = time_idx
-                if state > 0 and not is_bursting:
-                    is_bursting = True
-                    start_burst = month_original_idx
-                elif state == 0 and is_bursting:
-                    is_bursting = False
-                    burst_periods.append((ordered_month_names[start_burst], ordered_month_names[month_original_idx-1 if month_original_idx > start_burst else start_burst]))
-                    start_burst = -1
-            if is_bursting and start_burst != -1:
-                 burst_periods.append((ordered_month_names[start_burst], ordered_month_names[data_for_burst[-1][0]]))
-            if burst_periods:
-                bursty_terms[term] = {'frequencies': frequencies, 'burst_periods': burst_periods}
-        except Exception: pass
-    return bursty_terms
-
 # Deviations in PageRank and Katz centrality indices, requires final_metrics_df
 def find_centrality_growth(final_metrics_df, ordered_month_names,
                            metric_prefix='PageRank', min_growth_factor=1.5, min_final_value=0.01):
@@ -567,19 +523,14 @@ def trend_analysis(term_type='keywords'):
     for term, data in list(emerging_kw.items())[:5]:
         print(f"Term: {term}, Early avg. frequency: {data['avg_freq_early']}, Late avg. frequency: {data['avg_freq_late']}, Trend: {data['freq_trend']}")
 
-    print(f"\n======= 2. Burst Detection ({term_type}) =======")
-    bursty_kw = detect_bursts(monthly_frequencies, ordered_month_names, term_type=term_type, top_n_terms_to_check=20)
-    for term, data in list(bursty_kw.items())[:5]:
-        print(f"Term: {term}, Freq: {data['frequencies']}, Bursts (from, to): {data['burst_periods']}")
-
-    print("\n======= 3. PageRank =======")
+    print("\n======= 2. PageRank =======")
     # final_metrics_df также должен быть построен на стеммированных/лемматизированных узлах
     growing_pagerank_nodes = find_centrality_growth(final_metrics_df, ordered_month_names, metric_prefix='PageRank',
                                                     min_growth_factor=2.0, min_final_value=0.05)
     for node, data in list(growing_pagerank_nodes.items())[:5]:
         print(f"Узел: {node}, PageRank Initial: {data['initial_value']}, Final: {data['final_value']}, Increase: {data['growth_factor']}, Trend: {data['metric_trend']}")
 
-    print("\n======= 4. Graph Differencing =======")
+    print("\n======= 3. Graph Differencing =======")
     if len(monthly_graphs) >= 2:
         # monthly_graphs должны содержать стеммированные узлы
         idx_mar = ordered_month_names.index("March") if "March" in ordered_month_names else -1
@@ -589,7 +540,7 @@ def trend_analysis(term_type='keywords'):
         else: print("No graphs for March and April for comparison.")
     else: print("No graphs.")
 
-    print("\n======= 5. Topic modeling (LDA) =======")
+    print("\n======= 4. Topic modeling (LDA) =======")
     # russian_stemmer
     lda_topics_by_month = get_topics_per_month(
         df_combined, target_months_map, TARGET_YEAR,
@@ -597,7 +548,7 @@ def trend_analysis(term_type='keywords'):
         n_topics=3, n_top_words=5, model_type='lda'
     )
 
-    print("\n======= 6. Topic modeling (NMF) =======")
+    print("\n======= 5. Topic modeling (NMF) =======")
     # preprocess_text_stemming и russian_stemmer
     nmf_topics_by_month = get_topics_per_month(
         df_combined, target_months_map, TARGET_YEAR,

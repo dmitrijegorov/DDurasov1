@@ -12,7 +12,7 @@ import numpy as np
 import re
 import spacy
 
-from trends_processing import find_emerging_terms, detect_bursts, find_centrality_growth, compare_graphs
+from trends_processing import find_emerging_terms, find_centrality_growth, compare_graphs
 
 spacy.cli.download("ru_core_news_sm")
 
@@ -96,19 +96,14 @@ def trend_analysis(term_type='keywords'):
     for term, data in list(emerging_kw.items())[:5]:
         print(f"Term: {term}, Early avg. frequency: {data['avg_freq_early']}, Late avg. frequency: {data['avg_freq_late']}, Trend: {data['freq_trend']}")
 
-    print(f"\n======= 2. Burst Detection ({term_type}) =======")
-    bursty_kw = detect_bursts(monthly_frequencies, ordered_month_names, term_type=term_type, top_n_terms_to_check=20)
-    for term, data in list(bursty_kw.items())[:5]:
-        print(f"Term: {term}, Freq: {data['frequencies']}, Bursts (from, to): {data['burst_periods']}")
-
-    print("\n======= 3. PageRank =======")
+    print("\n======= 2. PageRank =======")
     # final_metrics_df также должен быть построен на стеммированных/лемматизированных узлах
     growing_pagerank_nodes = find_centrality_growth(final_metrics_df, ordered_month_names, metric_prefix='PageRank',
                                                     min_growth_factor=2.0, min_final_value=0.05)
     for node, data in list(growing_pagerank_nodes.items())[:5]:
         print(f"Узел: {node}, PageRank Initial: {data['initial_value']}, Final: {data['final_value']}, Increase: {data['growth_factor']}, Trend: {data['metric_trend']}")
 
-    print("\n======= 4. Graph Differencing =======")
+    print("\n======= 3. Graph Differencing =======")
     if len(monthly_graphs) >= 2:
         # monthly_graphs должны содержать стеммированные узлы
         idx_mar = ordered_month_names.index("March") if "March" in ordered_month_names else -1

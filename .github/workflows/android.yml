@@ -7,6 +7,7 @@ on:
       - 'releases/**'
       - 'master'
     paths-ignore:
+      - 'ocr/**'
       - 'analysis/**'
       - '**.md'
 

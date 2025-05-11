@@ -35,50 +35,6 @@ def find_emerging_terms(monthly_frequencies, ordered_month_names, term_type='key
     sorted_emerging_terms = dict(sorted(emerging_terms.items(), key=lambda item: item[1]['avg_freq_late'], reverse=True))
     return sorted_emerging_terms
 
-
-# Burst Detection, requires monthly_frequencies
-def detect_bursts(monthly_frequencies, ordered_month_names, term_type='keywords', top_n_terms_to_check=50):
-    try:
-        from burstdetection import GMMBurstsDetector as BD
-    except ImportError:
-        print("burstdetection not found.")
-        return {}
-
-    bursty_terms = {}
-    total_term_counts = Counter()
-    for month_name in ordered_month_names:
-        if month_name in monthly_frequencies and term_type in monthly_frequencies[month_name]:
-            total_term_counts.update(monthly_frequencies[month_name][term_type])
-    if not total_term_counts: return {}
-
-    for term, _ in total_term_counts.most_common(top_n_terms_to_check):
-        frequencies = [monthly_frequencies[m][term_type].get(term, 0) for m in ordered_month_names if m in monthly_frequencies]
-        if not frequencies or sum(frequencies) < 3: continue
-        data_for_burst = [(i, freq) for i, freq in enumerate(frequencies) if freq > 0]
-        if len(data_for_burst) < 2 : continue
-        try:
-            bd = BD(n_states=2, transition_cost=1.0, min_burst_length=1, observation_model='poisson')
-            bursts = bd.fit_predict(data_for_burst)
-            burst_periods = []
-            is_bursting = False
-            start_burst = -1
-            for i, (time_idx, freq) in enumerate(data_for_burst):
-                state = bursts[i]
-                month_original_idx = time_idx
-                if state > 0 and not is_bursting:
-                    is_bursting = True
-                    start_burst = month_original_idx
-                elif state == 0 and is_bursting:
-                    is_bursting = False
-                    burst_periods.append((ordered_month_names[start_burst], ordered_month_names[month_original_idx-1 if month_original_idx > start_burst else start_burst]))
-                    start_burst = -1
-            if is_bursting and start_burst != -1:
-                 burst_periods.append((ordered_month_names[start_burst], ordered_month_names[data_for_burst[-1][0]]))
-            if burst_periods:
-                bursty_terms[term] = {'frequencies': frequencies, 'burst_periods': burst_periods}
-        except Exception: pass
-    return bursty_terms
-
 # Deviations in PageRank and Katz centrality indices, requires final_metrics_df
 def find_centrality_growth(final_metrics_df, ordered_month_names,
                            metric_prefix='PageRank', min_growth_factor=1.5, min_final_value=0.01):
