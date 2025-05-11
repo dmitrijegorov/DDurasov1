@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import re
 import spacy
-from network_trends import trend_analysis
 
 spacy.cli.download("ru_core_news_sm")
 
@@ -87,4 +86,3 @@ df_combined = pd.DataFrame(sample_data_combined)
 target_months_map = {i+2: month_name for i, month_name in enumerate(months_list)}
 ordered_month_names = [target_months_map[m_num] for m_num in sorted(target_months_map.keys())]
 
-trend_analysis()

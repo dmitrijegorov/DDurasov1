@@ -114,6 +114,7 @@ target_months_map = {
     4: "April",
     5: "May"
 }
+ordered_month_names = [target_months_map[m_num] for m_num in sorted(target_months_map.keys())]
 
 for month_num, month_name in target_months_map.items():
     print(f"\n--- Processing data for {month_name} ({TARGET_YEAR}) ---")
