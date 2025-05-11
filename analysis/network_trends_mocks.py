@@ -12,6 +12,8 @@ import numpy as np
 import re
 import spacy
 
+from analysis.trends_processing import find_emerging_terms, detect_bursts, find_centrality_growth, compare_graphs
+
 spacy.cli.download("ru_core_news_sm")
 
 TARGET_YEAR = 2025
@@ -86,3 +88,35 @@ df_combined = pd.DataFrame(sample_data_combined)
 target_months_map = {i+2: month_name for i, month_name in enumerate(months_list)}
 ordered_month_names = [target_months_map[m_num] for m_num in sorted(target_months_map.keys())]
 
+def trend_analysis(term_type='keywords'):
+    print(f"\n======= 1. Emerging terms ({term_type}) =======")
+    # monthly_frequencies are required
+    emerging_kw = find_emerging_terms(monthly_frequencies, ordered_month_names, term_type=term_type,
+                                      low_freq_threshold=2, high_freq_threshold=10, min_ratio_increase=3)
+    for term, data in list(emerging_kw.items())[:5]:
+        print(f"Term: {term}, Early avg. frequency: {data['avg_freq_early']}, Late avg. frequency: {data['avg_freq_late']}, Trend: {data['freq_trend']}")
+
+    print(f"\n======= 2. Burst Detection ({term_type}) =======")
+    bursty_kw = detect_bursts(monthly_frequencies, ordered_month_names, term_type=term_type, top_n_terms_to_check=20)
+    for term, data in list(bursty_kw.items())[:5]:
+        print(f"Term: {term}, Freq: {data['frequencies']}, Bursts (from, to): {data['burst_periods']}")
+
+    print("\n======= 3. PageRank =======")
+    # final_metrics_df также должен быть построен на стеммированных/лемматизированных узлах
+    growing_pagerank_nodes = find_centrality_growth(final_metrics_df, ordered_month_names, metric_prefix='PageRank',
+                                                    min_growth_factor=2.0, min_final_value=0.05)
+    for node, data in list(growing_pagerank_nodes.items())[:5]:
+        print(f"Узел: {node}, PageRank Initial: {data['initial_value']}, Final: {data['final_value']}, Increase: {data['growth_factor']}, Trend: {data['metric_trend']}")
+
+    print("\n======= 4. Graph Differencing =======")
+    if len(monthly_graphs) >= 2:
+        # monthly_graphs должны содержать стеммированные узлы
+        idx_mar = ordered_month_names.index("March") if "March" in ordered_month_names else -1
+        idx_apr = ordered_month_names.index("April") if "April" in ordered_month_names else -1
+        if idx_mar != -1 and idx_apr != -1 and idx_mar < idx_apr:
+            _ = compare_graphs(monthly_graphs[idx_mar], monthly_graphs[idx_apr], G1_name=ordered_month_names[idx_mar], G2_name=ordered_month_names[idx_apr])
+        else: print("No graphs for March and April for comparison.")
+    else: print("No graphs.")
+
+# Mocks
+trend_analysis()
