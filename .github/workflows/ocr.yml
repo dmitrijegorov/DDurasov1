@@ -81,7 +81,7 @@ jobs:
 
     - name: Run recognition
       run: |
-        python paddleocr_script.py
+        python ocr/paddleocr_script.py
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
