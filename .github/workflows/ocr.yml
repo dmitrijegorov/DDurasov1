@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'sample.png'
+      - 'ocr/**'
       - '.github/workflows/ocr.yml'
       
 jobs:
@@ -30,13 +30,13 @@ jobs:
 
       - name: Run OCR
         run: |
-          python easyocr_script.py
+          python ocr/easyocr_script.py
 
       - name: Upload OCR result as artifact
         uses: actions/upload-artifact@v4
         with:
           name: easyocr-result
-          path: ocr_result.txt
+          path: ocr/ocr_result.txt
   tesseract:
     runs-on: ubuntu-latest
 
@@ -51,7 +51,7 @@ jobs:
 
     - name: Run OCR
       run: |
-        tesseract fsk.jpg tesseract -l rus+eng
+        tesseract ocr/fsk.jpg tesseract -l rus+eng
         cat tesseract.txt
 
     - name: Upload OCR result as artifact
@@ -81,24 +81,9 @@ jobs:
 
     - name: Run recognition
       run: |
-        python - <<EOF
-        from paddleocr import PaddleOCR
-        import os
-
-        ocr = PaddleOCR(use_angle_cls=True, lang='ru')
-        result = ocr.ocr('fsk.jpg', cls=True)
-        print(result)
-        with open("ocr_output.txt", "w", encoding="utf-8") as f:
-            if result and result[0]:
-                for line in result[0]:
-                    text = line[1][0]
-                    f.write(text + "\n")
-            else:
-                print("No text detected.")
-        EOF
-
+        python paddleocr_script.py
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: paddleocr-result
-        path: ocr_output.txt
+        path: ocr/ocr_output.txt
