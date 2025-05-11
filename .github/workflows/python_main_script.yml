@@ -35,4 +35,4 @@ jobs:
 
       - name: Run NLP script
         run: |
-          python python_main_script.py
+          python network_trends.py
