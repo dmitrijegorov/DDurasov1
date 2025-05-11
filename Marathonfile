@@ -1,0 +1,44 @@
+name: "instrumentation"
+outputDir: "build/reports/marathon"
+isCodeCoverageEnabled: true
+flakinessStrategy:
+  type: "probability"
+  minSuccessRate: 0.90
+  maxCount: 3
+  timeLimit: "-PT1H"
+screenRecordingPolicy: "ON_ANY"
+vendorConfiguration:
+  type: "Android"
+  androidSdk: "/Library/Android/sdk"
+  applicationApk: "app/build/outputs/apk/debug/app-debug.apk"
+  testApplicationApk: "app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk"
+  disableWindowAnimation: true
+  autoGrantPermission: true
+  screenRecordConfiguration:
+    preferableRecorderType: "video"
+    videoConfiguration:
+      enabled: true
+      width: 1080
+      height: 1920
+      bitrateMbps: 2
+      timeLimit: 30000
+  instrumentationArgs:
+    debug: "false"
+  applicationPmClear: true
+  testApplicationPmClear: true
+  waitForDevicesTimeoutMillis: 60000
+  allureConfiguration:
+    enabled: true
+  # See https://docs.marathonlabs.io/android/configure#test-access-configuration before copy-pasting this
+  testAccessConfiguration:
+    adb: true
+    console: true
+poolingStrategy:
+  type: "device-model"
+#shardingStrategy:
+#  type: "count"
+#  count: 1
+deviceInitializationTimeoutMillis: 18000
+uncompletedTestRetryQuota: 1
+debug: true
+
