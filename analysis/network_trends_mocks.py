@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import re
 import spacy
+from network_trends import trend_analysis
 
 spacy.cli.download("ru_core_news_sm")
 
@@ -20,7 +21,7 @@ russian_stopwords.extend(['это', 'весь', 'который', 'свой', '�
                           'такой', 'какой', 'например', 'каждый', 'очень', 'просто',
                           'однако', 'также', 'именно', 'конечно', 'коллега', 'спасибо',
                           'пожалуйста', 'добрый', 'день', 'вечер', 'утро', 'мой', 'твой',
-                          'ваш', 'наш', 'говорить', 'сказать', 'делать', 'сделать']) # Добавил еще немного
+                          'ваш', 'наш', 'говорить', 'сказать', 'делать', 'сделать'])
 
 ENGLISH_TO_RUSSIAN_TERMS = {
     'testfit': 'тестфит', 'revit': 'ревит', 'enscape': 'энскейп',
@@ -29,37 +30,6 @@ ENGLISH_TO_RUSSIAN_TERMS = {
     'software': 'софт', 'it': 'айти', 'digital': 'цифровой'
 }
 
-def preprocess_text_stemming(text, stemmer, stop_words, translation_dict):
-    if not isinstance(text, str): return []
-    text = re.sub(r'\*\*(.*?)\*\*|__(.*?)__', r'\1\2', text)
-    text = re.sub(r'\[(.*?)\]\(.*?\)', r'\1', text)
-    text = text.lower()
-    sorted_eng_terms = sorted(translation_dict.keys(), key=len, reverse=True)
-    for eng, rus in [(term, translation_dict[term]) for term in sorted_eng_terms]:
-        text = re.sub(r'\b' + re.escape(eng) + r'\b', rus, text)
-    text = re.sub(r'[^\w\s-]', '', text) # Оставляем буквы, цифры, пробелы, дефисы
-    text = re.sub(r'\s+', ' ', text).strip()
-
-    tokens = word_tokenize(text, language='russian')
-
-    # Стемминг и удаление стоп-слов
-    stemmed_tokens = []
-    for token in tokens:
-        if token not in stop_words and len(token) > 2 and not token.isdigit():
-            if token == '-' or re.fullmatch(r'-?\d+(\.\d+)?-?', token):
-                 continue
-            stem = stemmer.stem(token)
-            stemmed_tokens.append(stem)
-
-    # Убираем стоп-слова еще раз после стемминга (некоторые стеммы могут совпасть со стоп-словами)
-    # и короткие стеммы
-    processed_tokens = [
-        stem for stem in stemmed_tokens
-        if stem not in stop_words and len(stem) > 2 and not stem.isdigit()
-    ]
-    return processed_tokens
-
-
 months_list = ["February", "March", "April", "May"]
 monthly_frequencies = {
     month: {
@@ -67,7 +37,7 @@ monthly_frequencies = {
         'bigrams': Counter({f'биграмма{i}_{month.lower()}': np.random.randint(1, 10) for i in range(3)})
     } for month in months_list
 }
-monthly_frequencies["February"]['keywords']['внезапн_термин'] = 0 # Используем стемму
+monthly_frequencies["February"]['keywords']['внезапн_термин'] = 0
 monthly_frequencies["March"]['keywords']['внезапн_термин'] = 1
 monthly_frequencies["April"]['keywords']['внезапн_термин'] = 15
 monthly_frequencies["May"]['keywords']['внезапн_термин'] = 25
@@ -116,3 +86,5 @@ df_combined = pd.DataFrame(sample_data_combined)
 
 target_months_map = {i+2: month_name for i, month_name in enumerate(months_list)}
 ordered_month_names = [target_months_map[m_num] for m_num in sorted(target_months_map.keys())]
+
+trend_analysis()
