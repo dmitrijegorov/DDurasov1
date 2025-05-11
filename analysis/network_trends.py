@@ -1,10 +1,14 @@
 import pandas as pd
 import networkx as nx
+import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk import ngrams
 from collections import Counter
 import re
+import spacy
+
+spacy.cli.download("ru_core_news_sm")
 
 TARGET_YEAR = 2025
 russian_stopwords = stopwords.words("russian")

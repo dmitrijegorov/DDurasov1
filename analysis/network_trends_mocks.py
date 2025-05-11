@@ -3,6 +3,7 @@ import networkx as nx
 from collections import Counter, defaultdict
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.decomposition import LatentDirichletAllocation, NMF
+import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.snowball import SnowballStemmer
@@ -10,6 +11,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import re
+import spacy
+
+spacy.cli.download("ru_core_news_sm")
 
 TARGET_YEAR = 2025
 russian_stopwords = stopwords.words("russian")
