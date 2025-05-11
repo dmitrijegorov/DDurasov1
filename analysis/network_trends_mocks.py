@@ -12,7 +12,7 @@ import numpy as np
 import re
 import spacy
 
-from analysis.trends_processing import find_emerging_terms, detect_bursts, find_centrality_growth, compare_graphs
+from trends_processing import find_emerging_terms, detect_bursts, find_centrality_growth, compare_graphs
 
 spacy.cli.download("ru_core_news_sm")
 
