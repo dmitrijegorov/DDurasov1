@@ -35,4 +35,29 @@ jobs:
 
       - name: Run NLP script
         run: |
+          cd analysis
           python network_trends.py
+
+  trends-mock-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          cd analysis
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          python -m spacy download ru_core_news_sm
+          python -m nltk.downloader punkt stopwords wordnet
+
+      - name: Run NLP script
+        run: |
+          cd analysis
+          python network_trends_mocks.py

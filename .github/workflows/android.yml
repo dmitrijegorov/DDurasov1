@@ -1,10 +1,44 @@
 name: Android CI
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ "**" ]
+    branches:
+      - 'releases/**'
+      - 'master'
+    paths:
+      - 'build.gradle'
+      - 'settings.gradle'
+      - 'gradle.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'gradle/**'
+      - 'app/**'
+      - '*.gradle.kts'
+      - 'gradle/**'
+      - '.github/workflows/android.yml'
+    paths-ignore:
+      - 'analysis/**'
+      - '**.md'
+
   pull_request:
-    branches: [ "**" ]
+    branches:
+      - 'releases/**'
+      - 'master'
+    paths:
+      - 'build.gradle'
+      - 'settings.gradle'
+      - 'gradle.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'gradle/**'
+      - 'app/**'
+      - '*.gradle.kts'
+      - 'gradle/**'
+      - '.github/workflows/android.yml'
+    paths-ignore:
+      - 'analysis/**'
+      - '**.md'
 
 jobs:
   translate:
@@ -18,7 +52,7 @@ jobs:
       - name: Languine Action
         uses: languine-ai/languine@latest
         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           api-key: ${{ secrets.LANGUINE_API_KEY }}
           project-id: ${{ secrets.LANGUINE_PROJECT_ID }}
@@ -27,17 +61,17 @@ jobs:
           create-pull-request: true # coming soon
           dev-mode: true
           args: "--force"
-          
-  instrumentation-tests:
+
+  instrumentation-launch:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 8
     strategy:
       # Allow tests to continue on other devices if they fail on one device.
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04]
+        os: [ ubuntu-24.04 ]
         arch: [ x86_64 ]
-        target: [default, google_apis]
+        target: [ default, google_apis ]
         channel: [ stable ]
         api-level:
           - 30
