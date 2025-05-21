@@ -67,6 +67,7 @@ jobs:
         curl -F "file=@tesseract.txt" \
              -F "payload_json={\"content\": \"📄 New recognition\"}" \
              $DISCORD_WEBHOOK
+        ls
 
   paddleocr:
     runs-on: ubuntu-latest
