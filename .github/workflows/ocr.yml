@@ -60,6 +60,14 @@ jobs:
         name: tesseract-result
         path: tesseract.txt
 
+    - name: Send to Discord
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      run: |
+        curl -F "file=@tesseract.txt" \
+             -F "payload_json={\"content\": \"📄 New recognition\"}" \
+             $DISCORD_WEBHOOK
+
   paddleocr:
     runs-on: ubuntu-latest
 
