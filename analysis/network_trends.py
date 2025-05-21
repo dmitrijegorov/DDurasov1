@@ -16,7 +16,7 @@ spacy.cli.download("ru_core_news_sm")
 
 TARGET_YEAR = 2025
 russian_stopwords = stopwords.words("russian")
-russian_stopwords.extend(['это', 'весь', 'который', 'свой', 'еще', 'раз', 'здравствуйте',
+russian_stopwords.extend(['это', 'весь', 'который', 'которой', 'котор', 'которое', 'свой', 'еще', 'раз', 'здравствуйте',
                           'такой', 'какой', 'например', 'каждый', 'очень', 'просто',
                           'однако', 'также', 'именно', 'конечно', 'коллега', 'спасибо',
                           'пожалуйста', 'добрый', 'день', 'вечер', 'утро'])
@@ -120,7 +120,6 @@ for month_num, month_name in target_months_map.items():
     print(f"\n--- Processing data for {month_name} ({TARGET_YEAR}) ---")
 
     # Filter data for the specific month and year
-    # Using 'Content' column for processing. If 'clean_content' is guaranteed to be better, use that.
     month_df = df_combined[
         (df_combined['Year'] == TARGET_YEAR) & (df_combined['Month'] == month_num)
     ]
@@ -146,7 +145,6 @@ for month_num, month_name in target_months_map.items():
 
     print(f"Processing {len(month_df)} messages for {month_name}...")
     for index, row in month_df.iterrows():
-        # Using 'Content'. If 'clean_content' is more suitable and consistently available, use row['clean_content']
         text_to_process = row['Content']
 
         processed_tokens = preprocess_text(text_to_process, russian_stopwords, ENGLISH_TO_RUSSIAN_TERMS)
@@ -199,7 +197,7 @@ for month_num, month_name in target_months_map.items():
     if G.number_of_nodes() > 0:
         in_degree = dict(G.degree())
 
-        # katz_centrality_numpy is often more stable if available
+        # katz_centrality_numpy is often more stable
         try:
             # Alpha should be less than 1/spectral_radius(A)
             if G.number_of_edges() > 0 :
@@ -301,7 +299,7 @@ else:
 print(f"\nTotal {len(monthly_graphs)} graphs created for months: {', '.join(target_months_map.values())}")
 
 
-# <--- stemmer : SnowballStemmer --- >
+# stemmer : SnowballStemmer
 def preprocess_text_stemming(text, stemmer, stop_words, translation_dict):
     if not isinstance(text, str): return []
     text = re.sub(r'\*\*(.*?)\*\*|__(.*?)__', r'\1\2', text)
@@ -436,9 +434,9 @@ def compare_graphs(G1, G2, G1_name="G1", G2_name="G2"):
 
 
 # LDA and NMF for months
-# <--- preprocess_fn requires `russian_stemmer` --- >
+# preprocess_fn requires russian_stemmer
 def get_topics_per_month(df_combined, target_months_map, TARGET_YEAR,
-                         preprocess_fn, stemmer_or_lemmatizer, stop_words, translation_dict, # stemmer вместо mystem_analyzer
+                         preprocess_fn, stemmer_or_lemmatizer, stop_words, translation_dict,
                          n_topics=5, n_top_words=7, model_type='lda'):
     monthly_topics_data = {}
     for month_num, month_name in target_months_map.items():
@@ -453,7 +451,7 @@ def get_topics_per_month(df_combined, target_months_map, TARGET_YEAR,
             continue
 
         corpus = month_df['Content'].apply(
-            lambda x: " ".join(preprocess_fn(x, stemmer_or_lemmatizer, stop_words, translation_dict)) # передаем stemmer
+            lambda x: " ".join(preprocess_fn(x, stemmer_or_lemmatizer, stop_words, translation_dict))
         ).tolist()
         corpus = [doc for doc in corpus if doc.strip()]
 
@@ -524,7 +522,7 @@ def trend_analysis(term_type='keywords'):
         print(f"Term: {term}, Early avg. frequency: {data['avg_freq_early']}, Late avg. frequency: {data['avg_freq_late']}, Trend: {data['freq_trend']}")
 
     print("\n======= 2. PageRank =======")
-    # final_metrics_df также должен быть построен на стеммированных/лемматизированных узлах
+    # final_metrics_df with stemmed nodes
     growing_pagerank_nodes = find_centrality_growth(final_metrics_df, ordered_month_names, metric_prefix='PageRank',
                                                     min_growth_factor=2.0, min_final_value=0.05)
     for node, data in list(growing_pagerank_nodes.items())[:5]:
@@ -532,7 +530,7 @@ def trend_analysis(term_type='keywords'):
 
     print("\n======= 3. Graph Differencing =======")
     if len(monthly_graphs) >= 2:
-        # monthly_graphs должны содержать стеммированные узлы
+        # monthly_graphs with stemmed nodes
         idx_mar = ordered_month_names.index("March") if "March" in ordered_month_names else -1
         idx_apr = ordered_month_names.index("April") if "April" in ordered_month_names else -1
         if idx_mar != -1 and idx_apr != -1 and idx_mar < idx_apr:
@@ -549,7 +547,7 @@ def trend_analysis(term_type='keywords'):
     )
 
     print("\n======= 5. Topic modeling (NMF) =======")
-    # preprocess_text_stemming и russian_stemmer
+    # preprocess_text_stemming russian_stemmer
     nmf_topics_by_month = get_topics_per_month(
         df_combined, target_months_map, TARGET_YEAR,
         preprocess_text_stemming, russian_stemmer, russian_stopwords, ENGLISH_TO_RUSSIAN_TERMS,
